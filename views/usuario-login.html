@@ -1,0 +1,11 @@
+<form name="Usuario.usuarioLoginForm">
+   <!-- <div data-ng-class="{'invalid': User.form.name.$invalid && !User.form.name.$pristine, 'dirty': User.form.name.$dirty}"> -->
+  <div>
+    <input type="text" name="email" data-ng-model="Usuario.form.email" placeholder="Email" required>
+  </div>
+  <div>
+    <input type="password" name="senha" data-ng-model="Usuario.form.senha" placeholder="Senha">
+  </div>
+  <button class="btn btn-large blue waves-effect waves-light col s6" type="submit" name="cadastre">Cadastre-se</button>
+  <button ng-click='Usuario.submitForm(Usuario.form)' data-ng-disabled="User.editing || User.form.name.$pristine" class="btn btn-large green waves-effect waves-light col s6" type="submit" name="action">Login</button>
+</form>
