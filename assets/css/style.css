@@ -4,10 +4,17 @@ html body select {
 [disabled] {
   background-color: #ccc !important;
 }
+
+.fonte-titulo {
+  font-family: 'Open Sans Condensed', sans-serif;
+}
+
 .wrapper {
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   text-align: center;
+  margin-top: 3%;
+  /*background-color: #FFFAFA;*/
 }
 .menu li {
   display: inline-block;
@@ -73,3 +80,13 @@ html body select {
 .strike {
   text-decoration: line-through;
 }
+.btn-login {
+  width: 155px;
+  font-size: 10pt;
+}
+/*
+.btn-small {
+   border-
+
+}
+*/

@@ -6,6 +6,7 @@
   <div>
     <input type="password" name="senha" data-ng-model="Usuario.form.senha" placeholder="Senha">
   </div>
-  <button class="btn btn-large blue waves-effect waves-light col s6" type="submit" name="cadastre">Cadastre-se</button>
-  <button ng-click='Usuario.submitForm(Usuario.form)' data-ng-disabled="User.editing || User.form.name.$pristine" class="btn btn-large green waves-effect waves-light col s6" type="submit" name="action">Login</button>
+
+  <button ng-click='Usuario.submitForm(Usuario.form)' data-ng-disabled="User.editing || User.form.name.$pristine" class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" type="submit" name="action">Login</button>
+  <button class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" type="submit" name="cadastre">Cadastre-se</button>
 </form>
