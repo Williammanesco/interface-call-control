@@ -2,7 +2,7 @@
 angular.module('User', [])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
-      .when('/usuario-login', {
+      .when('/usuario/login', {
         templateUrl: 'views/usuario-login.html',
         controller: 'UsuarioLoginController',
         controllerAs: 'UsuarioLogin'
@@ -11,29 +11,17 @@ angular.module('User', [])
         templateUrl: 'views/users-create.html',
         controller: 'UserCreateController',
         controllerAs: 'Usuario'
-      })
-      .when('/users/github', {
-        templateUrl: 'views/users-github.html',
-        controller: 'UserGithubController',
-        controllerAs: 'UserGithub'
-      })
-      .when('/users/:id', {
-        templateUrl: 'views/users-details.html',
-        controller: 'UserDetailsController',
-        controllerAs: 'UserDetails'
       });
   }])
   .service('UserService', UserService)
-  .controller('UserController', ['UserService', UserController])
   .controller('UserCreateController', ['UserService', UserCreateController])
-  .controller('UsuarioLoginController', ['UserService', UsuarioLoginController])
-  .controller('UserGithubController', UserGithubController);
+  .controller('UsuarioLoginController', ['UserService', UsuarioLoginController]);
 
 function UserService($http) {
   const BASE_URL = 'http://localhost:3000/api/usuarios';
-  this.find = function(user) {
+  this.login = function(user) {
     const request = {
-      url: BASE_URL,
+      url: BASE_URL + '/login',
       method: 'POST',
       data: user
     }
@@ -75,7 +63,7 @@ function UserCreateController (UserService) {
     .success(function(data){
       console.log('CRIADO: ', data);
       //vm.cadastrado = data;
-      window.location.href = "#/";
+      window.location.href = "/";
     })
     .error(function(err){
       //console.log('Erro: ', err);
@@ -94,12 +82,15 @@ function UsuarioLoginController(UserService){
     console.log('user',user);
 
     UserService
-    .find(user)
+    .login(user)
     .success(function(data){
       //console.log('data',data);
       if(data.length === 0){
         vm.loginError = 'Email ou senha incorretos';
+      } else {
+         window.location.href = "#/chamadas";
       }
+
     })
     .error(function(err){
       console.log('err',err);

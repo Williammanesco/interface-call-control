@@ -1,15 +1,16 @@
 'use strict';
 
-angular.module('BeMEAN', [
+angular.module('CallControl', [
   'ngRoute'
-, 'User'
 , 'ngMessages'
+, 'Chamadas'
+, 'User'
 ])
   .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-    // $locationProvider.html5Mode(true);
+    $locationProvider.html5Mode(true);
     $routeProvider
       .when('/', {
-        redirectTo: '/usuario-login'
+        redirectTo: '/usuario/login'
       })
-      .otherwise({redirectTo: '/'});
+      .otherwise({redirectTo: '/usuario/login'});
   }])
