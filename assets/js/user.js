@@ -2,15 +2,15 @@
 angular.module('User', [])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
-      .when('/users', {
-        templateUrl: 'views/users-list.html',
-        controller: 'UserController',
-        controllerAs: 'User'
+      .when('/usuario-login', {
+        templateUrl: 'views/usuario-login.html',
+        controller: 'UsuarioLoginController',
+        controllerAs: 'UsuarioLogin'
       })
       .when('/users/create', {
         templateUrl: 'views/users-create.html',
         controller: 'UserCreateController',
-        controllerAs: 'User'
+        controllerAs: 'Usuario'
       })
       .when('/users/github', {
         templateUrl: 'views/users-github.html',
@@ -26,15 +26,16 @@ angular.module('User', [])
   .service('UserService', UserService)
   .controller('UserController', ['UserService', UserController])
   .controller('UserCreateController', ['UserService', UserCreateController])
-  .controller('UserDetailsController', UserDetailsController)
+  .controller('UsuarioLoginController', ['UserService', UsuarioLoginController])
   .controller('UserGithubController', UserGithubController);
 
 function UserService($http) {
-  const BASE_URL = 'http://localhost:3000/api/users/';
-  this.list = function() {
+  const BASE_URL = 'http://localhost:3000/api/usuarios';
+  this.find = function(user) {
     const request = {
       url: BASE_URL,
-      method: 'GET'
+      method: 'POST',
+      data: user
     }
     return $http(request);
   }
@@ -45,6 +46,7 @@ function UserService($http) {
       method: 'POST',
       data: user
     }
+    //console.log('http', user);
     return $http(request);
   }
 
@@ -60,42 +62,53 @@ function UserService($http) {
 function UserCreateController (UserService) {
   var vm = this;
 
+  vm.clicouCadastrar = false;
+
   vm.submitForm = submitForm;
   function submitForm(user) {
-    console.log('submitForm', user);
-    console.log('UserService', UserService);
+    console.log(user);
+    vm.clicouCadastrar = true;
+
 
     UserService
     .create(user)
     .success(function(data){
       console.log('CRIADO: ', data);
-      vm.cadastrado = data;
+      //vm.cadastrado = data;
+      window.location.href = "#/";
     })
     .error(function(err){
-      console.log('Erro: ', err);
+      //console.log('Erro: ', err);
+      console.log('err', err)
       vm.erro = err;
     });
   }
 }
 
-function UserGithubController($http) {
+function UsuarioLoginController(UserService){
   var vm = this;
-  const user = 'suissa';
-  const url = 'https://api.github.com/users/'+user;
-  const method = 'GET';
-  $http({
-    url: url,
-    method: method
-  })
-  .success(function(data){
-    console.log('Data: ', data);
-    vm.user = data;
-  })
-  .error(function(err){
-    console.log('Erro: ', err);
-  });
+
+  vm.login = login;
+  function login(user){
+
+    console.log('user',user);
+
+    UserService
+    .find(user)
+    .success(function(data){
+      //console.log('data',data);
+      if(data.length === 0){
+        vm.loginError = 'Email ou senha incorretos';
+      }
+    })
+    .error(function(err){
+      console.log('err',err);
+    });
+
+  }
+
+
 }
-UserGithubController.$inject = ['$http'];
 
 function UserController(UserService) {
   var vm = this;

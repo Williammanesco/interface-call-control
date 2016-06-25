@@ -3,12 +3,13 @@
 angular.module('BeMEAN', [
   'ngRoute'
 , 'User'
+, 'ngMessages'
 ])
   .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     // $locationProvider.html5Mode(true);
     $routeProvider
       .when('/', {
-        templateUrl: 'views/usuario-login.html'
+        redirectTo: '/usuario-login'
       })
       .otherwise({redirectTo: '/'});
   }])

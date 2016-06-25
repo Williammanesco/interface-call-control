@@ -1,19 +1,33 @@
 <!-- código da aula 12 -->
-<h2>Cadastro de usuário</h2>
+<h3>Cadastre-se</h3>
 <p>
-  {{ User.cadastrado._id }} <br>
-  {{ User.cadastrado.name }} <br>
-  {{ User.cadastrado.email }} <br>
+  {{ Usuario.erro }}
 </p>
-<p>
-  {{ User.erro }}
-</p>
-<form name="User.userForm">
-  <div data-ng-class="{'invalid': User.form.name.$invalid && !User.form.name.$pristine, 'dirty': User.form.name.$dirty}">
-    <input type="text" name="name" data-ng-model="User.form.name" placeholder="Name" required>
+
+<form name="UsuarioForm">
+<!--
+  <div data-ng-show="Usuario.clicouCadastrar">
+    <div ng-messages="Usuario.UsuarioForm.name.$error" style="color:red" role="alert">
+      <div ng-message="required">Você deve digitar um nome</div>
+    </div>
   </div>
-  <div data-ng-class="{'invalid' : User.form.email.$invalid && !User.form.name.$pristine}">
-    <input type="email" name="email" data-ng-model="User.form.email" placeholder="Email">
+
+  <div data-ng-class="{'invalid': Usuario.form.name.$invalid && !Usuario.form.name.$pristine, 'dirty': Usuario.form.name.$dirty}">
+    <input type="text" name="name" data-ng-model="Usuario.form.name" placeholder="Nome completo" required>
   </div>
-  <button ng-click='User.submitForm(User.form)' data-ng-disabled="User.editing || User.form.name.$pristine" class="btn btn-large green waves-effect waves-light col s12" type="submit" name="action">CREATE</button>
+
+  <div data-ng-class="{'invalid' : Usuario.form.email.$invalid && !Usuario.form.name.$pristine}">
+    <input type="email" name="email" data-ng-model="Usuario.form.email" placeholder="Email" >
+  </div>
+
+  <div data-ng-class="{'invalid' : Usuario.form.password.$invalid && !Usuario.form.password.$pristine}">
+    <input type="password" name="password" data-ng-model="Usuario.form.password" placeholder="Senha" >
+  </div>
+-->
+  <input type="text" name="nome" data-ng-model="Usuario.form.nome" placeholder="Nome completo" required>
+  <input type="email" name="email" data-ng-model="Usuario.form.email" placeholder="Email" required>
+  <input type="password" name="senha" data-ng-model="Usuario.form.senha" placeholder="Senha" required>
+
+  <button ng-click='Usuario.submitForm(Usuario.form)' data-ng-disabled="!UsuarioForm.$valid" class="btn btn-large green waves-effect waves-light col s12" type="submit" name="action">Cadastrar</button>
+
 </form>

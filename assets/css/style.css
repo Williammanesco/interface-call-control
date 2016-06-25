@@ -13,7 +13,7 @@ html body select {
   max-width: 500px;
   margin: 0 auto;
   text-align: center;
-  margin-top: 1%;
+  margin-top: 5%;
   /*background-color: #FFFAFA;*/
 }
 .menu li {
@@ -72,7 +72,7 @@ html body select {
 .atom-logo {
   display: block;
   margin: 0 auto;
-  width: 400px;
+  width: 250px;
 }
 .bold {
   font-weight: bold;
