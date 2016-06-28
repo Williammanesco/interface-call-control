@@ -13,9 +13,21 @@ html body select {
   max-width: 500px;
   margin: 0 auto;
   text-align: center;
-  margin-top: 5%;
+  margin-top: 3%;
   /*background-color: #FFFAFA;*/
 }
+
+.grupos {
+  position: absolute;
+  width: 300px;
+  left: 30px;
+  float:left;
+}
+
+.btn-remove-group {
+  width: 50px;
+}
+
 .menu li {
   display: inline-block;
   font-size: 2rem;
@@ -84,6 +96,11 @@ html body select {
   width: 155px;
   font-size: 10pt;
 }
+
+.page-footer{
+    color: blue;
+}
+
 /*
 .btn-small {
    border-

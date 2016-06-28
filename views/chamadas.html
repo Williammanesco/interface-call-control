@@ -1,6 +1,48 @@
-
 <section>
-    <h2>Chamadas</h2>
+  <h3>Chamadas</h3>
 
-    
+  <div class="row">
+
+    <div class="col s3 card-panel">
+      <table border="1" class="bordered highlight">
+        <caption>Grupos</caption>
+
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-ng-class="" class="item" data-ng-repeat="grupo in Chamadas.grupos">
+            <td>{{ grupo.nome }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <br>
+      <button data-ng-click="Chamadas.clickAddGrupo()" class="btn-small btn blue waves-effect waves-light" name="action">
+        <i class="material-icons center">add</i>
+      </button>
+
+      <button data-ng-click="" class="btn-small btn red waves-effect waves-light" name="action">
+        <i class="material-icons center">delete</i>
+      </button>
+
+      <br>
+
+
+    </div>
+
+    <div class="col s9">
+
+    </div>
+  </div>
+<!--
+  <td>
+    <button data-ng-click="" class="btn-small btn red waves-effect waves-light" name="action">
+      <i class="material-icons center">delete</i>
+    </button>
+  </td>
+-->
+
 </section>
