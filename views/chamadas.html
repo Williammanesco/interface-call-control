@@ -13,23 +13,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr data-ng-class="" class="item" data-ng-repeat="grupo in Chamadas.grupos">
+          <tr data-ng-class="{'grupo-selecionado':Chamadas.grupoSelecionado == grupo._id}" class="item" data-ng-repeat="grupo in Chamadas.grupos" data-ng-click="Chamadas.grupoSelecionado = grupo._id">
             <td>{{ grupo.nome }}</td>
           </tr>
         </tbody>
       </table>
 
       <br>
-      <button data-ng-click="Chamadas.clickAddGrupo()" class="btn-small btn blue waves-effect waves-light" name="action">
+      <a href="#/chamadas/grupos/add" class="btn-small btn blue waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Adicionar grupo" name="action">
         <i class="material-icons center">add</i>
-      </button>
+      </a>
 
-      <button data-ng-click="" class="btn-small btn red waves-effect waves-light" name="action">
+      <a data-ng-disabled="Chamadas.grupoSelecionado === ''" data-ng-click="" class="btn-small btn blue waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Editar grupo" name="action">
+        <i class="material-icons center">mode_edit</i>
+      </a>
+
+      <a data-ng-disabled="Chamadas.grupoSelecionado === ''" data-ng-click="" class="btn-small btn red waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Remover grupo" name="action">
         <i class="material-icons center">delete</i>
-      </button>
+      </a>
 
       <br>
-
+      <br>
 
     </div>
 

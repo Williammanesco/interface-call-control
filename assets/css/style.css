@@ -101,6 +101,10 @@ html body select {
     color: blue;
 }
 
+.grupo-selecionado {
+  background-color: #BEBEBE
+}
+
 /*
 .btn-small {
    border-

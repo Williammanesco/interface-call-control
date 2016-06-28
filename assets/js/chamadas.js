@@ -5,12 +5,18 @@ angular.module('Chamadas', [])
         templateUrl: 'views/chamadas.html',
         controller: 'ChamadasController',
         controllerAs: 'Chamadas'
+      })
+      .when('/chamadas/grupos/add', {
+        templateUrl: 'views/addGrupo.html',
+        controller: 'AddGrupoController',
+        controllerAs: 'Grupo'
       });
   }])
 //  .service('ChamadasService', ChamadasService)
 //  .service('UsuarioGruposService', UsuarioGruposService)
   .service('GruposService', GruposService)
-  .controller('ChamadasController', ['$routeParams', 'GruposService',ChamadasController]);
+  .controller('ChamadasController', ['$routeParams', 'GruposService',ChamadasController])
+  .controller('AddGrupoController', ['GruposService', AddGrupoController]);
 
 /*
 function UsuarioGruposService($http){
@@ -41,17 +47,18 @@ function GruposService($http){
 
 function ChamadasController($routeParams, GruposService){
   vm = this;
-  vm.clicouAddGrupo = false;
+  vm.grupoSelecionado = '';
 
-  console.log('$routeParams', $routeParams);
+  $(document).ready(function(){
+      $('.tooltipped').tooltip({delay: 50});
+  });
 
   GruposService
   .find($routeParams.userId)
   .success(function(data){
     vm.grupos = Array();
     data.forEach(function(grupo){
-      vm.grupos.push({ selecionado: false,
-                       nome: grupo.nome,
+      vm.grupos.push({ nome: grupo.nome,
                        _id: grupo._id
                      });
     });
@@ -61,15 +68,9 @@ function ChamadasController($routeParams, GruposService){
     console.log(err);
   });
 
-  vm.clickAddGrupo = clickAddGrupo;
-  function clickAddGrupo(){
-    vm.clicouAddGrupo = true;
-  }
+}
 
-
-
-
-  //vm.logado = UsuarioLogadoFactory.logado;
-  //document.getElementById('principal').style.display = 'none';
+function AddGrupoController(GruposService){
+  vm = this;
 
 }
