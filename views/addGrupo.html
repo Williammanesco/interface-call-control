@@ -1,1 +1,42 @@
-<h2>Adicionar Grupo</h2>
+<div class="row">
+  <div class="col s6">
+    <div class="panel-usuarios card-panel">
+      <h2 class="fonte-titulo">Adicionar Grupo</h2>
+
+      <form name="UsuarioForm">
+        <input type="text" name="nomeGrupo" placeholder="Nome do grupo" data-ng-model="Grupo.FormUsuarios.nomeGrupo">
+
+        <h4 class="fonte-titulo">Usuários</h4>
+
+        <input type="text" id="nomeUsuario" name="nomeUsuario" placeholder="Nome do usuário" data-ng-model="Grupo.FormUsuarios.nome">
+        <input type="text" id="telefoneUsuario" class="phone" name="telefoneUsuario" placeholder="Telefone do usuário" data-ng-model="Grupo.FormUsuarios.telefone">
+        <button data-ng-disabled="Grupo.FormUsuarios.nome == '' || Grupo.FormUsuarios.telefone == ''" data-ng-click="Grupo.addUsuario(Grupo.FormUsuarios)" class="btn blue waves-effect waves-light col s12" type="" name="addUsuario">Adicionar usuário</button>
+      </form>
+      <br>
+      <br>
+    </div>
+
+    <button type="button" name="confirmar" data-ng-disabled="Grupo.FormUsuarios.nomeGrupo === '' || Grupo.usuarios.length === 0" class="confirmargrupo btn btn-large green waves-effect waves-light" data-ng-click="Grupo.confimarGrupo(Grupo.FormUsuarios)">Confirmar</button>
+  </div>
+
+  <div class="col s6">
+    <div class="table-usuarios card-panel">
+      <table border="1" class="bordered highlight">
+        <caption><h4 class="fonte-titulo">Usuários do grupo</h4></caption>
+
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-ng-class="" class="item" data-ng-repeat="usuario in Grupo.usuarios">
+            <td>{{ usuario.nome }}</td>
+            <td>{{ usuario.telefone }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

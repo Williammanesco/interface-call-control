@@ -11,12 +11,12 @@
     <div>
       <input type="password" name="senha" data-ng-model="UsuarioLogin.form.senha" placeholder="Senha" required>
     </div>
-    
+
     <p class="red-text">
        {{ UsuarioLogin.loginError }}
     </p>
 
-    <button ng-click='UsuarioLogin.login(UsuarioLogin.form)' data-ng-disabled="!UsuarioLoginForm.$valid" class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" type="submit" name="action">Login</button>
+    <button  data-ng-click='UsuarioLogin.login(UsuarioLogin.form)' data-ng-disabled="!UsuarioLoginForm.$valid" class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" type="submit" name="action">Login</button>
     <!-- <button class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" type="submit" name="cadastre">Cadastre-se</button>-->
     <a href="/users/create" class="btn-login btn btn-small #ADD8E6 waves-effect waves-light" name="cadastre"> Cadastre-se </a>
   </form>

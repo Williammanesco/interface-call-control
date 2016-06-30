@@ -17,6 +17,16 @@ html body select {
   /*background-color: #FFFAFA;*/
 }
 
+.panel-usuarios {
+  max-width: 500px;
+  /*margin: 1 auto;*/
+  margin-left: 10%;
+  text-align: center;
+  margin-top: 3%;
+  background-color: #F5F5DC
+}
+
+
 .grupos {
   position: absolute;
   width: 300px;
@@ -105,9 +115,13 @@ html body select {
   background-color: #BEBEBE
 }
 
-/*
-.btn-small {
-   border-
-
+.table-usuarios {
+  max-width: 500px;
+/*  text-align: center; */
+  margin-top: 3%;
+  background-color: #F5F5DC
 }
-*/
+
+.confirmargrupo {
+  margin-left: 10%
+}
