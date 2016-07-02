@@ -3,7 +3,6 @@
 
 var app = angular.module('CallControl', [
   'ngRoute'
-, 'ngMessages'
 , 'Chamadas'
 , 'User'
 ])

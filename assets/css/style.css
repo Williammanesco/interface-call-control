@@ -26,14 +26,20 @@ html body select {
   background-color: #F5F5DC
 }
 
-
+.grupos {
+  max-width: 400px;
+  margin-left: 5%;
+  background-color: #F5F5DC
+}
+/*
 .grupos {
   position: absolute;
   width: 300px;
-  left: 30px;
+  margin-left: 10%;
   float:left;
+  background-color: #F5F5DC
 }
-
+*/
 .btn-remove-group {
   width: 50px;
 }
@@ -122,6 +128,20 @@ html body select {
   background-color: #F5F5DC
 }
 
+.table-chamadas {
+  max-width: 1500px;
+  margin-right: 10%;
+  background-color: #F5F5DC
+}
+
 .confirmargrupo {
   margin-left: 10%
+}
+
+.cor-chamada-realizada {
+  background-color: #ef9a9a;
+}
+
+.cor-chamada-recebida {
+  background-color: #c8e6c9;
 }
