@@ -1,6 +1,4 @@
 <section>
-  <h3>Chamadas</h3>
-
   <div class="row">
 
     <div class="col s4">
@@ -54,26 +52,59 @@
 
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>Telefone</th>
-              <th>Duração</th>
-              <th>Finalizada</th>
-              <th>Data</th>
+              <th data-ng-click="Chamadas.ordenar('nome')">Nome</th>
+              <th data-ng-click="Chamadas.ordenar('telefone')">Telefone</th>
+              <th data-ng-click="Chamadas.ordenar('duracão')">Duração</th>
+              <th data-ng-click="Chamadas.ordenar('finalizada')">Finalizada</th>
+              <th data-ng-click="Chamadas.ordenar('data')">Data</th>
             </tr>
           </thead>
           <tbody>
-            <tr data-ng-class="Chamadas.coresTabela(chamada)" class="item" data-ng-repeat="chamada in Chamadas.chamadas | filter: Chamadas.filter()">
+            <tr data-ng-class="Chamadas.coresTabela(chamada)" class="item" data-ng-repeat="chamada in Chamadas.paginaChamadas | filter: Chamadas.filter() | orderBy:Chamadas.sortKey:Chamadas.reverse">
               <td>{{ chamada.nome }}</td>
               <td>{{ chamada.telefone }}</td>
               <td>{{ chamada.duracao }}</td>
               <td>{{ chamada.finalizada }}</td>
-              <td>{{ chamada.data }}</td>
+              <td>{{ chamada.data | date:'dd-MM-yyyy'}}</td>
             </tr>
           </tbody>
         </table>
+
         <h6 class="fonte-titulo red-text text-lighten-3 bold">* Realizadas</h6>
         <h6 class="fonte-titulo green-text text-lighten-4 bold">* Recebidas</h6>
+
+        <ul class="pagination">
+          <li class="waves-effect" data-ng-click="Chamadas.voltaPagina()"><i class="material-icons">chevron_left</i></li>
+          <li class="waves-effect" data-ng-class="{'active':Chamadas.paginaAtual === 1}" data-ng-click="Chamadas.selecionaPagina(1)">1</li>
+          <li class="waves-effect" data-ng-class="{'active':Chamadas.paginaAtual === 2}" data-ng-click="Chamadas.selecionaPagina(2)">2</li>
+          <li class="waves-effect" data-ng-class="{'active':Chamadas.paginaAtual === 3}" data-ng-click="Chamadas.selecionaPagina(3)">3</li>
+          <li class="waves-effect" data-ng-class="{'active':Chamadas.paginaAtual === 4}" data-ng-click="Chamadas.selecionaPagina(4)">4</li>
+          <li class="waves-effect" data-ng-class="{'active':Chamadas.paginaAtual === 5}" data-ng-click="Chamadas.selecionaPagina(5)">5</li>
+          <li class="waves-effect" data-ng-click="Chamadas.avancaPagina()"><i class="material-icons">chevron_right</i></a></li>
+
+        </ul>
       </div>
+
+      <div class="row">
+        <button type="button" class='btn btn-medium waves-effect waves-light' name="atualizaChamadas" data-ng-click="Chamadas.atualizaChamadas()"><i class="large material-icons">autorenew</i></button>
+
+        <div class="preloader-wrapper small" data-ng-class="Chamadas.ativaPreLoader()">
+          <div class="spinner-layer spinner-green-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
   </div>

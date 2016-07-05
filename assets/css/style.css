@@ -145,3 +145,8 @@ html body select {
 .cor-chamada-recebida {
   background-color: #c8e6c9;
 }
+
+.preloader-wrapper {
+  position: relative;
+  top: 12px;
+}

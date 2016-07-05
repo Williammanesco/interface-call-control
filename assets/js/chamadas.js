@@ -68,7 +68,7 @@ function GruposService($http){
   }
 
   this.remove = function(grupoId) {
-    return $http.delete(BASE_URL + '/?_id='+grupoId);
+    return $http.delete(BASE_URL + '/?_id=' + grupoId);
   }
 
 }
@@ -82,11 +82,26 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
   vm.chamadas = Array();
   vm.ultConsRealizadas = Array();
   vm.ultConsRecebidas = Array();
-  vm.attRealizadas = false;
-  vm.attRecebidas = false;
+  vm.paginaAtual = 1;
+  vm.paginaChamadas = Array();
+  vm.processando = false;
 
-  vm.filter = filter;
-  function filter(){
+  vm.selecionaPagina = function(page){
+    vm.paginaAtual = page;
+    paginar(vm);
+  }
+
+  vm.avancaPagina = function(){
+    vm.paginaAtual++;
+    paginar(vm);
+  }
+
+  vm.voltaPagina = function(){
+    vm.paginaAtual--;
+    paginar(vm);
+  }
+
+  vm.filter = function (){
     var tipo = '';
     var obj = {}
 
@@ -105,44 +120,67 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
     return obj
   }
 
+  vm.ordenar = function(keyname){
+    vm.sortKey = keyname;
+    vm.reverse = vm.reverse;
+  };
+
   carregaGruposCadastrados(GruposService, vm);
 
+/*
   vm.timerChamadas = $interval(function(){
     carregaChamadasRealizadas(ChamadasService, vm);
   }, 2000);
+*/
 
-  vm.removerGrupoSelecionado = removerGrupoSelecionado;
-  function removerGrupoSelecionado(){
+  vm.removerGrupoSelecionado = function (){
+    vm.processando = true;
+
     GruposService
     .remove(vm.grupoSelecionado)
     .success(function(data){
 
-      UsuariosGrupoService.remove(vm.grupoSelecionado);
+      UsuariosGrupoService.remove(vm.grupoSelecionado)
+      .success(function(data){
+        Materialize.toast("Grupo removido!", 3000);
+        carregaGruposCadastrados(GruposService,vm);
+      })
+      .error(function(err){
+        Materialize.toast("Erro ao remover grupo!", 3000);
+      })
 
-      Materialize.toast("Grupo removido!", 3000);
-      carregaGruposCadastrados(GruposService,vm);
     })
     .error(function(err){
-      console.log('err del', err);
+      Materialize.toast("Erro ao remover grupo!", 3000);
     });
+    vm.processando = false;
   }
 
-  vm.selecionaGrupo = selecionaGrupo;
-  function selecionaGrupo(grupoId){
+  vm.atualizaChamadas = function(){
+    vm.processando = true;
+    carregaChamadasRealizadas(ChamadasService, vm);
+    vm.processando = false;
+  }
+
+  vm.selecionaGrupo = function (grupoId){
+    vm.processando = true;
     vm.grupoSelecionado = grupoId;
-    carregaChamadasRealizadas(ChamadasService, vm)
+    carregaChamadasRealizadas(ChamadasService, vm);
+    vm.processando = false;
   }
 
-  vm.checkFiltros = checkFiltros;
-  function checkFiltros(){
-    carregaChamadasRealizadas(ChamadasService, vm)
+  vm.checkFiltros = function (){
+    //carregaChamadasRealizadas(ChamadasService, vm)
   }
 
-  vm.coresTabela = coresTabela;
-  function coresTabela(chamada){
+  vm.coresTabela = function (chamada){
     if(chamada.tipo === 'RECEBIDA') return { 'cor-chamada-recebida': true }
 
     return { 'cor-chamada-realizada': true }
+  }
+
+  vm.ativaPreLoader = function(){
+    return { 'active': vm.processando }
   }
 
 }
@@ -157,7 +195,6 @@ function carregaGruposCadastrados(GruposService, vm){
                        _id: el._id
                      });
     });
-
   })
   .error(function(err){
     console.log(err);
@@ -167,101 +204,50 @@ function carregaGruposCadastrados(GruposService, vm){
 function carregaChamadasRealizadas(ChamadasService, vm){
 
   if(vm.grupoSelecionado === ''){
-    vm.chamadas = Array();
+    vm.paginaChamadas = Array();
     return;
   }
 
-    ChamadasService
-    .findRealizadas(vm.grupoSelecionado)
-    .success(function(data){
-        vm.ultConsRealizadas = data;
-    })
-    .error(function(err){
-      console.log(err);
-    });
+  ChamadasService
+  .findRealizadas(vm.grupoSelecionado)
+  .success(function(realizadas){
+    vm.ultConsRealizadas = realizadas;
 
     ChamadasService
     .findRecebidas(vm.grupoSelecionado)
-    .success(function(data){
-        vm.ultConsRecebidas = data;
+    .success(function(recebidas){
+      vm.ultConsRecebidas = recebidas;
+
+      vm.chamadas = Array();
+      if(vm.ultConsRealizadas.length != 0){
+        vm.ultConsRealizadas.forEach(function(el){
+          vm.chamadas.push(getArrayChamadas(el, 'REALIZADA'));
+        });
+      };
+
+      if(vm.ultConsRecebidas.length != 0){
+        vm.ultConsRecebidas.forEach(function(el){
+          vm.chamadas.push(getArrayChamadas(el, 'RECEBIDA'));
+        });
+      };
+
+      vm.chamadas.sort(function(a, b){
+        return a.dataCompleta - b.dataCompleta;
+      });
+
+      paginar(vm);
+
     })
     .error(function(err){
       console.log(err);
     });
 
-    vm.chamadas = Array();
-
-    if(vm.ultConsRealizadas.length != 0){
-      vm.ultConsRealizadas.forEach(function(el){
-        vm.chamadas.push(getArrayChamadas(el, 'REALIZADA'));
-      });
-    }
-
-    if(vm.ultConsRecebidas.length != 0){
-      vm.ultConsRecebidas.forEach(function(el){
-        vm.chamadas.push(getArrayChamadas(el, 'RECEBIDA'));
-      });
-    };
+  })
+  .error(function(err){
+    console.log(err);
+  });
 
 }
-
-/*
-function carregaChamadasRealizadas(ChamadasService, vm){
-
-  if(vm.grupoSelecionado === ''){
-    vm.chamadas = Array();
-    return;
-  }
-
-  if(!vm.checkRealizadas && !vm.checkRecebidas){
-    vm.chamadas = Array();
-    return;
-  }
-
-  if(vm.checkRealizadas){
-    ChamadasService
-    .findRealizadas(vm.grupoSelecionado)
-    .success(function(data){
-      if(data.length != vm.ultConsRealizadas.length){
-        vm.ultConsRealizadas = data;
-      } else vm.ultConsRealizadas = Array();
-    })
-    .error(function(err){
-      console.log(err);
-    });
-  } else vm.ultConsRealizadas = Array();
-
-  if(vm.checkRecebidas){
-    ChamadasService
-    .findRecebidas(vm.grupoSelecionado)
-    .success(function(data){
-      if(data.length != vm.ultConsRecebidas.length){
-        vm.ultConsRecebidas = data;
-      } else vm.ultConsRecebidas = Array();
-    })
-    .error(function(err){
-      console.log(err);
-    });
-  } else vm.ultConsRecebidas = Array();
-
-  if(vm.ultConsRealizadas.length != 0 || vm.ultConsRecebidas.length != 0){
-    vm.chamadas = Array();
-
-    if(vm.ultConsRealizadas.length != 0){
-      vm.ultConsRealizadas.forEach(function(el){
-        vm.chamadas.push(getArrayChamadas(el, 'REALIZADA'));
-      });
-    }
-
-    if(vm.ultConsRecebidas.length != 0){
-      vm.ultConsRecebidas.forEach(function(el){
-        vm.chamadas.push(getArrayChamadas(el, 'RECEBIDA'));
-      });
-    };
-  }
-
-}
-*/
 
 function getArrayChamadas(chamada, tipo){
   return {
@@ -270,6 +256,7 @@ function getArrayChamadas(chamada, tipo){
    , duracao: chamada.duracao
    , finalizada: chamada.finalizada
    , data: chamada.data.toString().substring(0,10)
+   , dataCompleta: chamada.data
    , tipo: tipo
   }
 }
@@ -340,4 +327,25 @@ function AddGrupoController($routeParams, GruposService, UsuariosGrupoService){
     });
 
   }
+}
+
+function paginar(vm) {
+    var tamanhoPagina = 5;
+    var pagina = vm.paginaAtual;
+
+    console.log('pagina',pagina);
+    vm.paginaChamadas = Array();
+
+    if(vm.chamadas.length > tamanhoPagina ){
+      if(pagina === 1){
+        for (var i = 0; i <= 4; i++){
+          vm.paginaChamadas.push(vm.chamadas[i]);
+        }
+      } else {
+        for (var i = pagina * tamanhoPagina - tamanhoPagina; i < vm.chamadas.length && i < pagina * tamanhoPagina; i++){
+          vm.paginaChamadas.push(vm.chamadas[i]);
+        }
+      }
+    } else vm.paginaChamadas = vm.chamadas;
+
 }
