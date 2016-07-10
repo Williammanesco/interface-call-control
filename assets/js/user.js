@@ -60,7 +60,7 @@ function UserCreateController (UserService) {
     UserService
     .create(user)
     .success(function(data){
-      Materialize.toast('Usuário cadastrado com sucesso!', 3000,'', function(){
+      Materialize.toast('Usuário cadastrado com sucesso!', 2000,'', function(){
         window.location.href = "#/usuario/login";
       });
     })

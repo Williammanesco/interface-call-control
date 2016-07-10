@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col s6">
     <div class="panel-usuarios card-panel">
-      <h2 class="fonte-titulo">Adicionar Grupo</h2>
+      <h2 class="fonte-titulo">{{ Grupo.titulo }}</h2>
 
       <form name="UsuarioForm">
         <input type="text" name="nomeGrupo" placeholder="Nome do grupo" data-ng-model="Grupo.FormUsuarios.nomeGrupo">
@@ -16,7 +16,9 @@
       <br>
     </div>
 
-    <button type="button" name="confirmar" data-ng-disabled="Grupo.FormUsuarios.nomeGrupo === '' || Grupo.usuarios.length === 0" class="confirmargrupo btn btn-large green waves-effect waves-light" data-ng-click="Grupo.confimarGrupo(Grupo.FormUsuarios)">Confirmar</button>
+    <button type="button" name="confirmar" data-ng-disabled="Grupo.FormUsuarios.nomeGrupo === '' || Grupo.usuarios.length === 0 || Grupo.inserindoGrupo" class="confirmargrupo btn btn-large green waves-effect waves-light" data-ng-click="Grupo.confimarGrupo(Grupo.FormUsuarios)">{{Grupo.descBotaoConfirmar}}</button>
+    <button type="button" name="cancelar"  class="btn btn-large red waves-effect waves-light" data-ng-click="Grupo.cancelar()">Cancelar</button>
+
   </div>
 
   <div class="col s6">

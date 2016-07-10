@@ -10,13 +10,18 @@ angular.module('Chamadas', [])
         templateUrl: 'views/addGrupo.html',
         controller: 'AddGrupoController',
         controllerAs: 'Grupo'
+      })
+      .when('/chamadas/grupos/alt/:userId/:grupoId', {
+        templateUrl: 'views/addGrupo.html',
+        controller: 'AlteraGrupoController',
+        controllerAs: 'Grupo'
       });
   }])
-  .service('UsuariosGrupoService', UsuariosGrupoService)
   .service('GruposService', GruposService)
   .service('ChamadasService', ChamadasService)
-  .controller('ChamadasController', ['$interval', '$routeParams', 'GruposService', 'UsuariosGrupoService', 'ChamadasService', ChamadasController])
-  .controller('AddGrupoController', ['$routeParams', 'GruposService', 'UsuariosGrupoService', AddGrupoController]);
+  .controller('ChamadasController', ['$interval', '$routeParams', 'GruposService', 'ChamadasService', ChamadasController])
+  .controller('AddGrupoController', ['$routeParams', 'GruposService',  AddGrupoController])
+  .controller('AlteraGrupoController', ['$routeParams', 'GruposService', AlteraGrupoController]);
 
 
 function ChamadasService($http){
@@ -33,23 +38,6 @@ function ChamadasService($http){
 
 }
 
-function UsuariosGrupoService($http){
-  const BASE_URL = 'http://localhost:3000/api/usuario-grupo';
-
-  this.create = function(users){
-    const request = {
-      url: BASE_URL,
-      method: 'POST',
-      data: users
-    }
-    return $http(request);
-  }
-
-  this.remove = function(grupoId) {
-    return $http.delete(BASE_URL + '/?id_grupo='+grupoId);
-  }
-}
-
 function GruposService($http){
   const BASE_URL = 'http://localhost:3000/api/grupos';
 
@@ -57,13 +45,16 @@ function GruposService($http){
     return $http.get(BASE_URL + '/?id_usuario='+userId);
   }
 
-  this.create = function(nome, userId) {
+  this.findId = function (grupoId) {
+    return $http.get(BASE_URL + '/?_id='+grupoId);
+  }
+
+  this.create = function(nome, userId, usuarios) {
     const request = {
       url: BASE_URL,
       method: 'POST',
-      data: { nome: nome, id_usuario: userId }
+      data: { nome: nome, id_usuario: userId, usuarios: usuarios }
     }
-    //console.log('http', user);
     return $http(request);
   }
 
@@ -71,9 +62,17 @@ function GruposService($http){
     return $http.delete(BASE_URL + '/?_id=' + grupoId);
   }
 
+  this.update = function (grupoId, nome, userId, usuarios) {
+    const request = {
+      url: BASE_URL + '/'+grupoId,
+      method: 'PUT',
+      data: { nome: nome, id_usuario: userId, usuarios: usuarios }
+    }
+    return $http(request);
+  }
 }
 
-function ChamadasController($interval, $routeParams, GruposService, UsuariosGrupoService, ChamadasService){
+function ChamadasController($interval, $routeParams, GruposService, ChamadasService){
   vm = this;
   vm.grupoSelecionado = '';
   vm.userId = $routeParams.userId;
@@ -85,6 +84,8 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
   vm.paginaAtual = 1;
   vm.paginaChamadas = Array();
   vm.processando = false;
+  vm.usuarioSelecionado = 'Todos os usuários';
+  vm.usuariosGrupo = Array();
 
   vm.selecionaPagina = function(page){
     vm.paginaAtual = page;
@@ -103,26 +104,32 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
 
   vm.filter = function (){
     var tipo = '';
-    var obj = {}
+    var objFilter = {}
 
     if(vm.checkRecebidas && vm.checkRealizadas){
-      obj.tipo = ''
+      objFilter.tipo = ''
     } else if(!vm.checkRecebidas && !vm.checkRealizadas) {
-      obj.tipo = 'NENHUMA'
+      objFilter.tipo = 'NENHUMA'
     }
     else {
       if(vm.checkRecebidas)
-        obj.tipo = 'RECEBIDA';
+        objFilter.tipo = 'RECEBIDA';
       else if(vm.checkRealizadas)
-        obj.tipo = 'REALIZADA';
+        objFilter.tipo = 'REALIZADA';
     }
 
-    return obj
+    if(vm.usuarioSelecionado === 'Todos os usuários'){
+      objFilter.nome = '';
+    } else {
+      objFilter.nome = vm.usuarioSelecionado;
+    }
+
+    return objFilter;
   }
 
   vm.ordenar = function(keyname){
     vm.sortKey = keyname;
-    vm.reverse = vm.reverse;
+    vm.reverse = !vm.reverse;
   };
 
   carregaGruposCadastrados(GruposService, vm);
@@ -139,19 +146,11 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
     GruposService
     .remove(vm.grupoSelecionado)
     .success(function(data){
-
-      UsuariosGrupoService.remove(vm.grupoSelecionado)
-      .success(function(data){
-        Materialize.toast("Grupo removido!", 3000);
-        carregaGruposCadastrados(GruposService,vm);
-      })
-      .error(function(err){
-        Materialize.toast("Erro ao remover grupo!", 3000);
-      })
-
+      Materialize.toast("Grupo removido!", 2000);
+      carregaGruposCadastrados(GruposService,vm);
     })
     .error(function(err){
-      Materialize.toast("Erro ao remover grupo!", 3000);
+      Materialize.toast("Erro ao remover grupo!", 2000);
     });
     vm.processando = false;
   }
@@ -166,6 +165,7 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
     vm.processando = true;
     vm.grupoSelecionado = grupoId;
     carregaChamadasRealizadas(ChamadasService, vm);
+    carregaUsuariosDoGrupo(vm);
     vm.processando = false;
   }
 
@@ -183,6 +183,10 @@ function ChamadasController($interval, $routeParams, GruposService, UsuariosGrup
     return { 'active': vm.processando }
   }
 
+  vm.atualizaSelectUsuarios = function () {
+    $('select').material_select('update');
+  }
+
 }
 
 function carregaGruposCadastrados(GruposService, vm){
@@ -192,7 +196,8 @@ function carregaGruposCadastrados(GruposService, vm){
     vm.grupos = Array();
     data.forEach(function(el){
       vm.grupos.push({ nome: el.nome,
-                       _id: el._id
+                       _id: el._id,
+                       usuarios: el.usuarios
                      });
     });
   })
@@ -261,10 +266,22 @@ function getArrayChamadas(chamada, tipo){
   }
 }
 
+function carregaUsuariosDoGrupo(vm){
+  vm.usuariosGrupo = Array();
 
-function AddGrupoController($routeParams, GruposService, UsuariosGrupoService){
-  vm = this;
+  vm.grupos.find( function (element) {
+    if (element._id === vm.grupoSelecionado) {
+      element.usuarios.forEach(function (user) {
+        vm.usuariosGrupo.push({ nome: user.nome_usuario});
+      });
+      return;
+    }
+  });
 
+}
+
+
+function phoneMask() {
   var maskBehavior = function (val) {
    return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
   },
@@ -274,59 +291,70 @@ function AddGrupoController($routeParams, GruposService, UsuariosGrupoService){
   };
 
   $('.phone').mask(maskBehavior, options);
+}
 
+function AddGrupoController($routeParams, GruposService){
+  vm = this;
+
+  vm.titulo = 'Adicionar Grupo';
+  vm.descBotaoConfirmar = 'Adicionar';
   vm.usuarios = Array();
   vm.FormUsuarios = {
     nome: '',
     telefone: ''
   }
 
-  vm.addUsuario = addUsuario;
+  phoneMask();
 
-  function addUsuario(user){
-    vm.usuarios.push({
-      nome: user.nome,
-      telefone: user.telefone
-    });
-
-    user.nome = '';
-    user.telefone = '';
+  vm.addUsuario = function (user) {
+    return addUsuario(user);
   }
 
-  vm.confimarGrupo = confimarGrupo;
-  function confimarGrupo(grupo){
+  vm.confimarGrupo = function (grupo) {
+    return confimarGrupo(grupo,vm)
+  };
 
-    GruposService
-    .create(grupo.nomeGrupo, $routeParams.userId)
-    .success(function(data){
-      var usuariosAdd = Array();
-      var idGrupoInserido = data._id;
-
-      vm.usuarios.forEach(function(el){
-        var usuario = {
-          id_grupo: idGrupoInserido,
-          nome_usuario: el.nome,
-          telefone_usuario: el.telefone
-        };
-
-        usuariosAdd.push(usuario);
-      });
-
-      UsuariosGrupoService
-      .create(usuariosAdd)
-      .success(function(data){
-        window.location.href = "#/chamadas/" + $routeParams.userId;
-      })
-      .error(function(err){
-        console.log('err',err);
-      });
-
-    })
-    .error(function(err){
-      console.log('err grupo', err)
-    });
-
+  vm.cancelar = function () {
+    window.location.href = "#/chamadas/" + $routeParams.userId;
   }
+}
+
+function addUsuario(user){
+  vm.usuarios.push({
+    nome: user.nome,
+    telefone: user.telefone
+  });
+
+  user.nome = '';
+  user.telefone = '';
+}
+
+function confimarGrupo(grupo,vm){
+  var usuariosAdd = Array();
+
+  vm.inserindoGrupo = true;
+  vm.usuarios.forEach(function(el){
+    var usuario = {
+      nome_usuario: el.nome,
+      telefone_usuario: el.telefone
+    };
+
+    usuariosAdd.push(usuario);
+  });
+
+  GruposService
+  .create(grupo.nomeGrupo, $routeParams.userId, usuariosAdd)
+  .success(function(data){
+    Materialize.toast('Grupo inserido com sucesso!', 2000,'', function () {
+      vm.inserindoGrupo = false;
+      window.location.href = "#/chamadas/" + $routeParams.userId;
+    });
+  })
+  .error(function(err){
+    console.log('err grupo', err);
+    vm.inserindoGrupo = false;
+  });
+
 }
 
 function paginar(vm) {
@@ -348,4 +376,73 @@ function paginar(vm) {
       }
     } else vm.paginaChamadas = vm.chamadas;
 
+}
+
+function AlteraGrupoController($routeParams, GruposService) {
+  vm = this;
+
+  vm.titulo = 'Alterar Grupo';
+  vm.descBotaoConfirmar = 'Alterar';
+  vm.usuarios = Array();
+  vm.userId = $routeParams.userId;
+  vm.grupoId = $routeParams.grupoId;
+  vm.FormUsuarios = {  nomeGrupo: ''
+                     , nome: ''
+                     , telefone: ''
+                    };
+
+  phoneMask();
+
+  GruposService
+  .findId(vm.grupoId)
+  .success(function (data) {
+    var grupo = data[0];
+
+    vm.FormUsuarios.nomeGrupo = grupo.nome;
+    grupo.usuarios.forEach(function (element) {
+      vm.usuarios.push({
+        nome: element.nome_usuario,
+        telefone: element.telefone_usuario
+      });
+    });
+  })
+  .error(function (err) {
+    console.log(err);
+  });
+
+  vm.confimarGrupo = function (grupo) {
+    var usuariosAdd = Array();
+
+    vm.inserindoGrupo = true;
+    vm.usuarios.forEach(function(el){
+      var usuario = {
+        nome_usuario: el.nome,
+        telefone_usuario: el.telefone
+      };
+
+      usuariosAdd.push(usuario);
+    });
+
+    GruposService
+    .update(vm.grupoId, grupo.nomeGrupo, vm.userId, usuariosAdd)
+    .success(function (data) {
+      Materialize.toast('Grupo alterado com sucesso!', 2000,'', function () {
+        vm.inserindoGrupo = false;
+        window.location.href = "#/chamadas/" + vm.userId;
+      })
+    })
+    .error(function (err) {
+      console.log(err);
+      Materialize.toast('Erro ao alterar grupo.', 2000);
+      vm.inserindoGrupo = false;
+    });
+  };
+
+  vm.addUsuario = function (user) {
+    return addUsuario(user);
+  }
+
+  vm.cancelar = function () {
+    window.location.href = "#/chamadas/" + vm.userId;
+  }
 }
